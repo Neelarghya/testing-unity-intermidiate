@@ -1,6 +1,6 @@
 ﻿public class Counter
 {
-    public int Count { get; private set; }
+    public float Count { get; private set; }
 
     public void Reset()
     {
@@ -12,7 +12,7 @@
         Count++;
     }
 
-    public void IncrementBy(int amount)
+    public void IncrementBy(float amount)
     {
         Count += amount;
     }
