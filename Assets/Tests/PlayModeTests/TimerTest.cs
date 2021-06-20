@@ -9,6 +9,7 @@ public class TimerTest
 {
     private Timer _timer;
     private Text _display;
+    private WorldManager _worldManager;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
@@ -16,7 +17,19 @@ public class TimerTest
         GameObject gameObject = new GameObject();
         _timer = gameObject.AddComponent<Timer>();
         _display = gameObject.AddComponent<Text>();
+        
+        new GameObject().AddComponent<WorldManager>();
+        _worldManager = WorldManager.Instance;
+        
         ReflectionUtils.SetFieldValue(_timer, "display", _display);
+        ReflectionUtils.SetFieldValue(_worldManager, ReflectionUtils.ConvertPropertyNameToFieldName("TimeScale"), 1);
+    }
+
+    [OneTimeTearDown]
+    public void OneTimeTearDown()
+    {
+        ReflectionUtils.SetStaticFieldValue<WorldManager>("_instance", null);
+        Object.Destroy(_worldManager.gameObject);
     }
 
     [UnityTest]

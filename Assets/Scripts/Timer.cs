@@ -13,7 +13,8 @@ public class Timer : MonoBehaviour
 
     private void Update()
     {
-        display.text = $"{_counter.Count:0.000}";
+        float time = _counter.Count * WorldManager.Instance.TimeScale;
+        display.text = $"{time:0.000}";
         _counter.IncrementBy(Time.deltaTime);
     }
 }
