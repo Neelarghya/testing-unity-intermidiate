@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using NUnit.Framework;
+using TestUtils;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -15,7 +16,7 @@ public class TimerTest
         GameObject gameObject = new GameObject();
         _timer = gameObject.AddComponent<Timer>();
         _display = gameObject.AddComponent<Text>();
-        _timer.display = _display;
+        ReflectionUtils.SetFieldValue(_timer, "display", _display);
     }
 
     [UnityTest]

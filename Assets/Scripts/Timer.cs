@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class Timer : MonoBehaviour
 {
-    public Text display;
+    [SerializeField] private Text display;
     private Counter _counter;
 
     private void Start()

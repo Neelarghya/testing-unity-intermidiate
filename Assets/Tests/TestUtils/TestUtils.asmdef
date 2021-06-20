@@ -1,10 +1,9 @@
 {
-    "name": "PlayModeTests",
+    "name": "TestUtils",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "ApplicationCode",
-        "TestUtils"
+        "ApplicationCode"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
