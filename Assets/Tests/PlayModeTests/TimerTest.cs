@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using TestUtils;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 
@@ -17,10 +18,10 @@ public class TimerTest
         GameObject gameObject = new GameObject();
         _timer = gameObject.AddComponent<Timer>();
         _display = gameObject.AddComponent<Text>();
-        
+
         new GameObject().AddComponent<WorldManager>();
         _worldManager = WorldManager.Instance;
-        
+
         ReflectionUtils.SetFieldValue(_timer, "display", _display);
         ReflectionUtils.SetFieldValue(_worldManager, ReflectionUtils.ConvertPropertyNameToFieldName("TimeScale"), 1);
     }
@@ -28,7 +29,8 @@ public class TimerTest
     [OneTimeTearDown]
     public void OneTimeTearDown()
     {
-        ReflectionUtils.SetStaticFieldValue<WorldManager>(ReflectionUtils.ConvertPropertyNameToFieldName("Instance"), null);
+        ReflectionUtils.SetStaticFieldValue<WorldManager>(
+            ReflectionUtils.ConvertPropertyNameToFieldName("Instance"), null);
         Object.Destroy(_worldManager.gameObject);
     }
 
@@ -57,5 +59,23 @@ public class TimerTest
         float newValue = float.Parse(_display.text);
 
         Assert.AreEqual(1, newValue - previousValue, 0.01f);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldInvokeOnStepEventOnceAfterAStep()
+    {
+        const float stepSize = 0.5f;
+        int callCount = 0;
+        UnityEvent onStepEvent = new UnityEvent();
+        onStepEvent.AddListener(() => callCount++);
+        
+        ReflectionUtils.SetFieldValue(_timer, "onStepComplete", onStepEvent);
+        ReflectionUtils.SetFieldValue(_timer, "stepSize", stepSize);
+
+        yield return new WaitForSeconds(stepSize);
+
+        Assert.AreEqual(1, callCount);
+
+        onStepEvent.RemoveAllListeners();
     }
 }
