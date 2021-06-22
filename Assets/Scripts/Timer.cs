@@ -6,13 +6,24 @@ public class Timer : MonoBehaviour
 {
     [SerializeField] private Text display;
     [SerializeField] private float stepSize = 1f;
-    [SerializeField] private UnityEvent onStepComplete;
+    [SerializeField] private UnityEvent onStepComplete = new UnityEvent();
     private Counter _counter;
     private float _lastCount;
+    private StepCounter _stepCounter;
 
     private void Start()
     {
         _counter = new Counter();
+
+        _stepCounter = GetComponent<StepCounter>();
+        if (_stepCounter)
+            onStepComplete.AddListener(_stepCounter.IncrementStep);
+    }
+
+    private void OnDestroy()
+    {
+        if (_stepCounter)
+            onStepComplete.AddListener(_stepCounter.IncrementStep);
     }
 
     private void Update()
@@ -26,7 +37,7 @@ public class Timer : MonoBehaviour
             _lastCount = count;
             onStepComplete?.Invoke();
         }
-        
+
         _counter.IncrementBy(Time.deltaTime);
     }
 }

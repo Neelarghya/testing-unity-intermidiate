@@ -10,12 +10,14 @@ public class TimerTest
 {
     private Timer _timer;
     private Text _display;
+    private MockStepCounter _stepCounter;
     private WorldManager _worldManager;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
         GameObject gameObject = new GameObject();
+        _stepCounter = gameObject.AddComponent<MockStepCounter>();
         _timer = gameObject.AddComponent<Timer>();
         _display = gameObject.AddComponent<Text>();
 
@@ -66,9 +68,10 @@ public class TimerTest
     {
         const float stepSize = 0.5f;
         int callCount = 0;
-        UnityEvent onStepEvent = new UnityEvent();
-        onStepEvent.AddListener(() => callCount++);
-        
+        UnityEvent onStepEvent = (UnityEvent) ReflectionUtils.GetFieldValue(_timer, "onStepComplete");
+        UnityAction action = () => callCount++;
+        onStepEvent.AddListener(action);
+
         ReflectionUtils.SetFieldValue(_timer, "onStepComplete", onStepEvent);
         ReflectionUtils.SetFieldValue(_timer, "stepSize", stepSize);
 
@@ -76,6 +79,19 @@ public class TimerTest
 
         Assert.AreEqual(1, callCount);
 
-        onStepEvent.RemoveAllListeners();
+        onStepEvent.RemoveListener(action);
+    }
+
+    [UnityTest]
+    public IEnumerator ShouldInvokeStepCounterAfterAStep()
+    {
+        const float stepSize = 0.5f;
+        _stepCounter.wasIncrementByCalled = false;
+
+        ReflectionUtils.SetFieldValue(_timer, "stepSize", stepSize);
+
+        yield return new WaitForSeconds(stepSize);
+
+        Assert.IsTrue(_stepCounter.wasIncrementByCalled);
     }
 }
