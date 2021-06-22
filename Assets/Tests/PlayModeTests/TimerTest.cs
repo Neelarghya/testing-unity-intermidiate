@@ -28,7 +28,7 @@ public class TimerTest
     [OneTimeTearDown]
     public void OneTimeTearDown()
     {
-        ReflectionUtils.SetStaticFieldValue<WorldManager>("_instance", null);
+        ReflectionUtils.SetStaticFieldValue<WorldManager>(ReflectionUtils.ConvertPropertyNameToFieldName("Instance"), null);
         Object.Destroy(_worldManager.gameObject);
     }
 
